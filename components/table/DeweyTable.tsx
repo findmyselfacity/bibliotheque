@@ -1,7 +1,9 @@
 import {
-  TableContainer, Paper, Table, TableHead, TableRow, TableCell,
+  TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody
 } from '@mui/material';
 import React from 'react';
+import { bookList } from './sampledata'
+
 
 function DeweyTable() {
   return (
@@ -15,6 +17,14 @@ function DeweyTable() {
             <TableCell align="right">Link</TableCell>
           </TableRow>
         </TableHead>
+        <TableBody>
+          {bookList.map((book, index) => <TableRow key={index}>
+            <TableCell>{book.deweyDecimal}</TableCell>
+            <TableCell>{book.title}</TableCell>
+            <TableCell>{book.author}</TableCell>
+            <TableCell>{book.subject}</TableCell>
+          </TableRow>)}
+        </TableBody>
       </Table>
     </TableContainer>
   );
