@@ -30,16 +30,17 @@ const bookImport = [];
 
 books.forEach(({ url }, currentBookIndex) => {
   test(`should extract book info ${url}`, async ({ page }) => {
+    test.setTimeout(60000);
+
     const book = {
       author: '',
       isbn: '',
       pageTitle: '',
       title: '',
       url,
-      deweyDecimalClassification: '',
       upc: '',
       ddc: {
-        mostPopular: [],
+        mostPopular: '',
         mostRecent: [],
         latestEdition: [],
       },
@@ -47,29 +48,41 @@ books.forEach(({ url }, currentBookIndex) => {
     await page.goto(url);
 
     book.pageTitle = await page.title();
-    // console.log('book', book);
     expect(book.pageTitle).toBeTruthy();
+    // Often the title and author are in the page title
     book.title = book.pageTitle.replace(/ by .*/, '');
     book.author = book.pageTitle.replace(/.* by /, '');
 
     bookImport[currentBookIndex] = book;
 
-    book.isbn = '9780911469349';
     // TODO: extract the ISBN if possible
-    book.isbn = await page.getByLabel('isbn').innerText();
-    book.upc = await page.getByLabel('upc').innerText();
-
+    try {
+      // expect(await page.getByText('UPC')).toHaveText('UPC', { timeout: 1000 });
+      book.upc = await page.getByText('UPC')?.locator('..')?.innerText();
+    } catch (err) {
+      console.log(`Unable to extract the upc for ${url}`);
+    }
+    try {
+      // expect(await page.getByText('ISBN')).toHaveText('ISBN', { timeout: 1000 });
+      // book.isbn = await page.getByText('ISBN')?.locator('..')?.innerText();
+    } catch (err) {
+      console.log(`Unable to extract the isbn for ${url}`);
+    }
+    book.isbn = book.isbn || book.upc;
     console.log(JSON.stringify(book, null, 2));
+    expect(book.isbn).toBeTruthy();
 
-    await page.goto(`http://classify.oclc.org/classify2/Classify?isbn=${book.isbn}&summary=true`);
+    if (book.isbn) {
+      await page.goto(`http://classify.oclc.org/classify2/Classify?isbn=${book.isbn}&summary=true`);
 
-    // Extract the Dewey Decimal Classification (DDC) if possible
-    book.ddc = (await page.$$eval('ddc', (ddcs) => ddcs.map((ddc) => ({
-      mostPopular: ddc.querySelector('mostPopular')?.getAttribute('nsfa'),
-      mostRecent: ddc.querySelector('mostRecent')?.getAttributeNames(),
-      latestEdition: ddc.querySelector('latestEdition')?.getAttributeNames(),
-    }))));
-
+      // Extract the Dewey Decimal Classification (DDC) if possible
+      // book.isbn = '9780911469349';
+      book.ddc = (await page.$$eval('ddc', (ddcs) => ddcs.map((ddc) => ({
+        mostPopular: ddc.querySelector('mostPopular')?.getAttribute('nsfa'),
+        mostRecent: ddc.querySelector('mostRecent')?.getAttributeNames(),
+        latestEdition: ddc.querySelector('latestEdition')?.getAttributeNames(),
+      }))));
+    }
     console.log('book', book);
   });
 });
