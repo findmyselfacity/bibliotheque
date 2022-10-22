@@ -1,93 +1,91 @@
 import { test, expect } from '@playwright/test';
+import fs from 'fs';
+import path from 'path';
 
 const books = [
-  {
-    url: 'https://bookshop.org/p/books/tenements-towers-trash-an-unconventional-illustrated-history-of-new-york-city-julia-wertz/113878?ean=9780316501217',
-  // }, {
-  //   url: 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcRhyIlYNtezFcMITyUVZxykV8Uhrcqpd_XMI492WljU1_M2slwr',
-  // }, {
-  //   url: 'https://wwnorton.com/books/9780393733075',
-  // }, {
-  //   url: 'https://www.abebooks.com/Kindness-Strangers-Travel-Stories-Heart-Grow/31071327871/bd?cm_mmc=ggl-_-US_Shopp_Trade0to10-_-product_id=COM9781786855312USED-_-keyword=&gclid=Cj0KCQjwhsmaBhCvARIsAIbEbH5JPnMZFpuM7FsOXuAj0fm9UBjTGRRYIipq_aNYsQr7KOQ_cV64NLIaAqCfEALw_wcB',
-  // }, {
-  //   url: 'https://www.amazon.com/Greenpoint-Brooklyns-Forgotten-Past-Geoffrey/dp/1512256625?ref=d6k_applink_bb_dls&dplnkId=92612192-58c5-4409-ba64-d6661e03051d',
-  // }, {
-  //   url: 'https://www.barnesandnoble.com/w/country-plumbing-gerry-hartigan/1112606522',
-  // }, {
-  //   url: 'https://www.biblio.com/book/you-please-quiet-please-carver-raymond/d/1292331716?aid=frg',
-  // }, {
-  //   url: 'https://www.goodreads.com/book/show/333690.365_Days',
-  // }, {
-  //   url: 'https://www.thriftbooks.com/w/rigger-a-memoir-from-high-school-to-high-steel/9391355/#isbn=0692287035&idiq=37116444',
-  // }, {
-  //   url: 'https://www.thriftbooks.com/w/the-great-houdini-magician-extraordinary/13493456/item/29063475/?gclid=Cj0KCQjwhsmaBhCvARIsAIbEbH5Bc0KoWZ6pqs1EjX-0VmGSzoOQOFqpTNUghdX6H_CAlV0vp6ANC-oaAg8zEALw_wcB#idiq=29063475&edition=13155882',
-  // }, {
-  //   url: 'https://a.co/d/bZ3XLPU',
-  },
+  ["9780140074512","9780140074512","EAN_13","1666466035550","22 oct. 2022 15 h 13 min 55 s","Google How to Become Ridiculously Well-read in One Evening [E. O. Parrott] [188pp.]"],
+  ["9780140086416","9780140086416","EAN_13","1666465730747","22 oct. 2022 15 h 08 min 50 s","Google Later the Same Day [Grace Paley] [211pp.]"],
+  ["9780316010795","9780316010795","EAN_13","1666465974061","22 oct. 2022 15 h 12 min 54 s","Google Dress Your Family in Corduroy and Denim [David Sedaris] [272pp.]"],
+  ["9780316501217","9780316501217","EAN_13","1666465674451","22 oct. 2022 15 h 07 min 54 s","Google Tenements, Towers & Trash [Julia Wertz] [284pp.]"],
+  ["9780316779425","9780316779425","EAN_13","1666465992434","22 oct. 2022 15 h 13 min 12 s","Google Barrel Fever [David Sedaris] [212pp.]"],
+  ["9780393733075","9780393733075","EAN_13","1666465529304","22 oct. 2022 15 h 05 min 29 s","Google Garden Guide: New York City (Revised Edition) [Nancy Berner, Susan Lowry] [425pp.]"],
+  ["9780394754390","9780394754390","EAN_13","1666466023223","22 oct. 2022 15 h 13 min 43 s","Google Platitudes [Trey Ellis] [183pp.]"],
+  ["9780688052850","9780688052850","EAN_13","1666466003444","22 oct. 2022 15 h 13 min 23 s","Google Whad'ya Know? [Michael Feldman] [159pp.]"],
+  ["9780692287033","9780692287033","EAN_13","1666465647252","22 oct. 2022 15 h 07 min 27 s","Google Rigger [Larry James Neff] [158pp.]"],
+  ["9780849934025","9780849934025","EAN_13","1666465826097","22 oct. 2022 15 h 10 min 26 s","Google My Life as a Smashed Burrito with Extra Hot Sauce [Bill Myers] [184pp.]"],
+  ["9780914457015","9780914457015","EAN_13","1666466059644","22 oct. 2022 15 h 14 min 19 s","Google The Complete Book of Beer Drinking Games (and Other Really Important Stuff) [Andy Griscom, Randy Rand, Scott Johnston] [127pp.]"],
+  ["9780940322776","9780940322776","EAN_13","1666465811382","22 oct. 2022 15 h 10 min 11 s","Google Renoir, My Father [Jean Renoir] [472pp.]"],
+  ["9781512256628","9781512256628","EAN_13","1666465767501","22 oct. 2022 15 h 09 min 27 s","Google Greenpoint Brooklyn's Forgotten Past [Geoffrey Cobb] [390pp.]"],
+  ["9781550593327","9781550593327","EAN_13","1666466090151","22 oct. 2022 15 h 14 min 50 s","Google Wolves in Russia [Will N. Graves] [232pp.]"],
+  ["9781786855312","9781786855312","EAN_13","1666465607785","22 oct. 2022 15 h 06 min 47 s","Google The Kindness of Strangers [Fearghal O Nuallain] [320pp.]"],
+  ["9781896597089","9781896597089","EAN_13","1666465951808","22 oct. 2022 15 h 12 min 31 s","Google No Love Lost [Ariel Bordeaux] [52pp.]"],
 ];
 
-const bookImport = [];
+const detailsRegex = /Google ([^[]*) \[([^\]]*)\] \[([^\]]*)pp\.\]/;
+const outDirectory = 'data';
+const outFile = 'books.json';
 
-books.forEach(({ url }, currentBookIndex) => {
-  test(`should extract book info ${url}`, async ({ page }) => {
-    test.setTimeout(60000);
+test.beforeAll(() => {
+  console.log('beforeAll');
+  try {
+    fs.mkdirSync(path.join(outDirectory));
+    fs.unlinkSync(path.join(outDirectory, outFile));
+    // start the json in the file
+    fs.appendFileSync(path.join(outDirectory, outFile), '{');
+  } catch (err) {
+    if (!err || err?.code === 'EEXIST') {
+      return;
+    }
+    if (err) {
+      throw err;
+    }
+  }
+});
+
+books.forEach((row, currentRow) => {
+  test(`should extract book info ${row[0]}`, async ({ page }) => {
+    // console.log('row', row);
+    // Extract the info from the row
+    const [isbn, again, format, stuff, importDate, details] = row;
+    expect(isbn.length).toBeGreaterThan(3);
+
+    // Extract the info from the details
+    const matches = detailsRegex.exec(details);
+    // console.log('matches', matches);
+    const [entireMatch, title, author, pages] = matches;
+    expect(title.length).toBeGreaterThan(3);
+    expect(author.length).toBeGreaterThan(3);
+    expect(pages.length).toBeGreaterThan(1);
 
     const book = {
-      author: '',
-      isbn: '',
-      pageTitle: '',
-      title: '',
-      url,
-      upc: '',
+      author,
+      isbn,
+      title,
+      pages: parseInt(pages, 10),
+      deweyDecimal: '',
       ddc: {
         mostPopular: '',
         mostRecent: [],
         latestEdition: [],
       },
     };
-    await page.goto(url);
 
-    book.pageTitle = await page.title();
-    expect(book.pageTitle).toBeTruthy();
-    // Often the title and author are in the page title
-    book.title = book.pageTitle.replace(/ by .*/, '');
-    book.author = book.pageTitle.replace(/.* by /, '');
+    await page.goto(`http://classify.oclc.org/classify2/Classify?isbn=${book.isbn}&summary=true`);
 
-    bookImport[currentBookIndex] = book;
-
-    // TODO: extract the ISBN if possible
-    try {
-      // expect(await page.getByText('UPC')).toHaveText('UPC', { timeout: 1000 });
-      book.upc = await page.getByText('UPC')?.locator('..')?.innerText();
-    } catch (err) {
-      console.log(`Unable to extract the upc for ${url}`);
-    }
-    try {
-      // expect(await page.getByText('ISBN')).toHaveText('ISBN', { timeout: 1000 });
-      // book.isbn = await page.getByText('ISBN')?.locator('..')?.innerText();
-    } catch (err) {
-      console.log(`Unable to extract the isbn for ${url}`);
-    }
-    book.isbn = book.isbn || book.upc;
-    console.log(JSON.stringify(book, null, 2));
-    expect(book.isbn).toBeTruthy();
-
-    if (book.isbn) {
-      await page.goto(`http://classify.oclc.org/classify2/Classify?isbn=${book.isbn}&summary=true`);
-
-      // Extract the Dewey Decimal Classification (DDC) if possible
-      // book.isbn = '9780911469349';
-      book.ddc = (await page.$$eval('ddc', (ddcs) => ddcs.map((ddc) => ({
-        mostPopular: ddc.querySelector('mostPopular')?.getAttribute('nsfa'),
-        mostRecent: ddc.querySelector('mostRecent')?.getAttributeNames(),
-        latestEdition: ddc.querySelector('latestEdition')?.getAttributeNames(),
-      }))));
-    }
-    console.log('book', book);
+    // Extract the Dewey Decimal Classification (DDC) if possible
+    book.ddc = (await page.$$eval('ddc', (ddcs) => ddcs.map((ddc) => ({
+      mostPopular: ddc.querySelector('mostPopular')?.getAttribute('nsfa'),
+      mostRecent: ddc.querySelector('mostRecent')?.getAttributeNames(),
+      latestEdition: ddc.querySelector('latestEdition')?.getAttributeNames(),
+    }))));
+    book.deweyDecimal = book.ddc?.mostPopular;
+    const result = JSON.stringify(book, null, 2);
+    console.log('book', result);
+    fs.appendFileSync(path.join(outDirectory, outFile), `${result}${currentRow < books.length - 1 ? ', ' : ''}`);
   });
 });
 
 test.afterAll(() => {
-  // TODO: each worker has it's own part of the array
-  // console.log(JSON.stringify(bookImport, null, 2));
+  // close the json file
+  fs.appendFileSync(path.join(outDirectory, outFile), '}');
 });
