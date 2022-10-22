@@ -1,11 +1,8 @@
 import React from 'react';
-// import type { NextPage } from 'next';
 import Head from 'next/head';
-import Image from 'next/image';
-import Button from '@mui/material/Button';
 
 import styles from '../styles/Home.module.css';
-import DewTable from '../components/table/table';
+import DeweyTable from '../components/table/DeweyTable';
 
 function Home() {
   return (
@@ -18,13 +15,16 @@ function Home() {
 
       <main className={styles.main}>
         <h2 className={styles.title}>
-          Organize your library with the <br /><a target="_blank" href="https://en.wikipedia.org/wiki/List_of_Dewey_Decimal_classes">Dewey Decimal System!</a>
+          Organize your library with the
+          {' '}
+          <br />
+          <a target="_blank" href="https://en.wikipedia.org/wiki/List_of_Dewey_Decimal_classes" rel="noreferrer">Dewey Decimal System!</a>
         </h2>
 
-        <DewTable></DewTable>
-        
+        <DeweyTable />
+
       </main>
-      
+
     </div>
   );
 }
