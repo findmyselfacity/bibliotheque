@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Button from '@mui/material/Button';
 
 import styles from '../styles/Home.module.css';
+import DewTable from '../components/table/table';
 
 function Home() {
   return (
@@ -22,6 +23,7 @@ function Home() {
           <a href="https://nextjs.org">Next.js!</a>
         </h1>
 
+        <DewTable />
         <Button className={styles.description}>
           Get started by editing
           {' '}
