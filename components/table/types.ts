@@ -1,6 +1,8 @@
 export interface BookInfo {
     deweyDecimal: number | string;
     author: string;
-    subject: string;
+    isbn: string;
+    subject?: string;
     title: string;
+    pages: number;
   }
