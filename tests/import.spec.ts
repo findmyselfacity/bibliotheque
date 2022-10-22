@@ -26,12 +26,8 @@ const outDirectory = 'data';
 const outFile = 'books.json';
 
 test.beforeAll(() => {
-  console.log('beforeAll');
   try {
     fs.mkdirSync(path.join(outDirectory));
-    fs.unlinkSync(path.join(outDirectory, outFile));
-    // start the json in the file
-    fs.appendFileSync(path.join(outDirectory, outFile), '{');
   } catch (err) {
     if (!err || err?.code === 'EEXIST') {
       return;
@@ -63,29 +59,24 @@ books.forEach((row, currentRow) => {
       title,
       pages: parseInt(pages, 10),
       deweyDecimal: '',
-      ddc: {
-        mostPopular: '',
-        mostRecent: [],
-        latestEdition: [],
-      },
     };
 
     await page.goto(`http://classify.oclc.org/classify2/Classify?isbn=${book.isbn}&summary=true`);
 
     // Extract the Dewey Decimal Classification (DDC) if possible
-    book.ddc = (await page.$$eval('ddc', (ddcs) => ddcs.map((ddc) => ({
+    const deweyDecimalExtraction = (await page.$$eval('ddc', (ddcs) => ddcs.map((ddc) => ({
       mostPopular: ddc.querySelector('mostPopular')?.getAttribute('nsfa'),
       mostRecent: ddc.querySelector('mostRecent')?.getAttributeNames(),
       latestEdition: ddc.querySelector('latestEdition')?.getAttributeNames(),
     }))));
-    book.deweyDecimal = book.ddc?.mostPopular;
-    const result = JSON.stringify(book, null, 2);
+    book.deweyDecimal = deweyDecimalExtraction[0]?.mostPopular ?? '';
+    const result = JSON.stringify(book);
     console.log('book', result);
-    fs.appendFileSync(path.join(outDirectory, outFile), `${result}${currentRow < books.length - 1 ? ', ' : ''}`);
+    fs.appendFileSync(path.join(outDirectory, outFile), `${result}${currentRow < books.length ? ', \n' : ''}`);
   });
 });
 
 test.afterAll(() => {
-  // close the json file
-  fs.appendFileSync(path.join(outDirectory, outFile), '}');
+  // cant close the json file because this is executed by each worker
+  // fs.appendFileSync(path.join(outDirectory, outFile), '}');
 });

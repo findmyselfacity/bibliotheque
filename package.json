@@ -5,7 +5,7 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev",
-    "import": "playwright test tests/import.spec.ts",
+    "import": "rm -rf data/*; playwright test tests/import.spec.ts",
     "lint": "next lint -- --fix",
     "start": "next start",
     "test:e2e": "playwright test tests",
