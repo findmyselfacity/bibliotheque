@@ -17,22 +17,13 @@ function Home() {
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to
-          {' '}
-          <a href="https://nextjs.org">Next.js!</a>
-        </h1>
+        <h2 className={styles.title}>
+          Organize your library with the <br /><a target="_blank" href="https://en.wikipedia.org/wiki/List_of_Dewey_Decimal_classes">Dewey Decimal System!</a>
+        </h2>
 
-        <DewTable />
-        <Button className={styles.description}>
-          Get started by editing
-          {' '}
-          <code className={styles.code}>pages/index.tsx</code>
-        </Button>
-
+        <DewTable></DewTable>
         
       </main>
-
       
     </div>
   );
