@@ -3,12 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
     "build": "next build",
+    "dev": "next dev",
+    "import": "rm -rf data/*; playwright test tests/import.spec.ts",
+    "lint": "next lint -- --fix",
     "start": "next start",
-    "test": "echo 'no tests defined'",
     "test:e2e": "playwright test tests",
-    "lint": "next lint -- --fix"
+    "test": "echo 'no tests defined'"
   },
   "dependencies": {
     "@emotion/react": "^11.10.4",
