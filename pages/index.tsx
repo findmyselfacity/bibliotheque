@@ -2,6 +2,8 @@ import React from 'react';
 // import type { NextPage } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
+import Button from '@mui/material/Button';
+
 import styles from '../styles/Home.module.css';
 
 function Home() {
@@ -20,11 +22,11 @@ function Home() {
           <a href="https://nextjs.org">Next.js!</a>
         </h1>
 
-        <p className={styles.description}>
+        <Button className={styles.description}>
           Get started by editing
           {' '}
           <code className={styles.code}>pages/index.tsx</code>
-        </p>
+        </Button>
 
         <div className={styles.grid}>
           <a href="https://nextjs.org/docs" className={styles.card}>
