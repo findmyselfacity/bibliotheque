@@ -3,7 +3,7 @@ import {
 } from '@mui/material';
 import React from 'react';
 import { bookList } from './sampledata'
-
+import { BookInfo } from './types';
 
 function DeweyTable() {
   return (
@@ -12,17 +12,15 @@ function DeweyTable() {
         <TableHead>
           <TableRow>
             <TableCell>Dewey Decimal #</TableCell>
-            <TableCell align="right">BookTitle</TableCell>
-            <TableCell align="right">Author</TableCell>
-            <TableCell align="right">Link</TableCell>
+            <TableCell>BookTitle</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {bookList.map((book, index) => <TableRow key={index}>
+          {bookList
+          .sort((a: BookInfo, b: BookInfo) => (a.title.localeCompare(b.title)))
+          .map((book, index) => <TableRow key={index}>
             <TableCell>{book.deweyDecimal}</TableCell>
             <TableCell>{book.title}</TableCell>
-            <TableCell>{book.author}</TableCell>
-            <TableCell>{book.subject}</TableCell>
           </TableRow>)}
         </TableBody>
       </Table>
