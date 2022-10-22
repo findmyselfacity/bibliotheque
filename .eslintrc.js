@@ -7,7 +7,8 @@ module.exports = {
   extends: [
     'next/core-web-vitals',
     'plugin:react/recommended',
-    'airbnb',
+    'plugin:import/typescript',
+    'plugin:@typescript-eslint/recommended',
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
