@@ -29,7 +29,7 @@ function Home({ books }: { books: BookInfo[]}) {
   );
 }
 
-function getServerSideProps() {
+function getStaticProps() {
   return {
     props: {
       books: bookList,
@@ -38,7 +38,7 @@ function getServerSideProps() {
   };
 }
 export {
-  getServerSideProps,
+  getStaticProps,
 };
 
 export default Home;
