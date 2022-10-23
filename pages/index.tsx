@@ -3,8 +3,10 @@ import Head from 'next/head';
 
 import styles from '../styles/Home.module.css';
 import DeweyTable from '../components/table/DeweyTable';
+import { bookList } from '../components/table/sampledata';
+import { BookInfo } from '../components/table/types';
 
-function Home() {
+function Home({ books }: { books: BookInfo[]}) {
   return (
     <div className={styles.container}>
       <Head>
@@ -21,12 +23,22 @@ function Home() {
           <a target="_blank" href="https://en.wikipedia.org/wiki/List_of_Dewey_Decimal_classes" rel="noreferrer">Dewey Decimal System!</a>
         </h2>
 
-        <DeweyTable />
-
+        <DeweyTable books={books} />
       </main>
-
     </div>
   );
 }
+
+function getStaticProps() {
+  return {
+    props: {
+      books: bookList,
+      title: 'Bibliotheque',
+    },
+  };
+}
+export {
+  getStaticProps,
+};
 
 export default Home;
