@@ -1,4 +1,4 @@
-{
+[
   {"author":"Larry James Neff","isbn":"9780692287033","title":"Rigger","pages":158,"deweyDecimal":""},
   {"author":"E. O. Parrott","isbn":"9780140074512","title":"How to Become Ridiculously Well-read in One Evening","pages":188,"deweyDecimal":"809.924"},
   {"author":"David Sedaris","isbn":"9780316779425","title":"Barrel Fever","pages":212,"deweyDecimal":"814.54"},
@@ -15,4 +15,4 @@
   {"author":"Ariel Bordeaux","isbn":"9781896597089","title":"No Love Lost","pages":52,"deweyDecimal":""},
   {"author":"Michael Feldman","isbn":"9780688052850","title":"Whad'ya Know?","pages":159,"deweyDecimal":"818.5402"},
   {"author":"Julia Wertz","isbn":"9780316501217","title":"Tenements, Towers & Trash","pages":284,"deweyDecimal":"974.71"}
-}
+]
